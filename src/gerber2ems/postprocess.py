@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import skrf
 
-from gerber2ems.config import Config
+from gerber2ems.config import Config, TraceConfig
 from gerber2ems.constants import RESULTS_DIR, PLOT_STYLE
 
 logger = logging.getLogger(__name__)
@@ -212,8 +212,8 @@ class Postprocesor:
                         color="orange",
                     )
 
-                    axs[0].set_ylabel(f"Magnitude, {pair.name} |Z| [\Omega]$")
-                    axs[1].set_ylabel(f"Angle, {pair.name} arg(Z) [^\circ]$")
+                    axs[0].set_ylabel(f"Magnitude, {pair.name} |Z| [\\Omega]$")
+                    axs[1].set_ylabel(f"Angle, {pair.name} arg(Z) [^\\circ]$")
                     axs[1].set_xlabel("Frequency, f [GHz]")
                     axs[0].grid(True)
                     axs[1].grid(True)
@@ -365,6 +365,36 @@ class Postprocesor:
         file_path = f"Port_{port_number}_data.csv"
         logger.debug("Saving port no. %d parameters to file: %s", port_number, file_path)
         np.savetxt(os.path.join(path, file_path), output, fmt="%e", delimiter=", ", header=header, comments="")
+
+    def save_touchstones(self) -> None:
+        """Save all touchstone files."""
+        logger.info("Saving touchstone files.")
+        for trace in Config.get().traces:
+            self.save_trace_touchstone(trace)
+
+    def save_trace_touchstone(self, trace: TraceConfig) -> None:
+        """Save s-parameters of trace to touchstone."""
+        if (
+            self.is_valid(self.s_params[trace.start][trace.start])
+            and self.is_valid(self.s_params[trace.stop][trace.stop])
+            and self.reference_zs[trace.start] == self.reference_zs[trace.stop]
+        ):
+            params = [(self.s_params[i][j] for i in [trace.start.trace.stop]) for j in [trace.start, trace.stop]]
+            output = np.empty((len(params) * 2 + 1, len(self.frequencies)))
+            output[0, :] = self.frequencies / 1e9
+            for i, param in params:
+                output[2 * i, :] = 20 * np.log10(np.abs(param))
+                output[2 * i + 1, :] = np.angle(param, deg=True)
+
+            header = f"# GHz S DB R {self.reference_zs[trace.start]}"
+            np.savetxt(
+                os.path.join(RESULTS_DIR, trace.name + ".s2p"),
+                output,
+                fmt="%.4f",
+                delimiter="\t",
+                newline="\n",
+                header=header,
+            )
 
     @staticmethod
     def is_valid(array: np.ndarray):
