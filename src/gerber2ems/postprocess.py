@@ -379,14 +379,17 @@ class Postprocesor:
             and self.is_valid(self.s_params[trace.stop][trace.stop])
             and self.reference_zs[trace.start] == self.reference_zs[trace.stop]
         ):
-            params = [(self.s_params[i][j] for i in [trace.start.trace.stop]) for j in [trace.start, trace.stop]]
-            output = np.empty((len(params) * 2 + 1, len(self.frequencies)))
-            output[0, :] = self.frequencies / 1e9
-            for i, param in params:
-                output[2 * i, :] = 20 * np.log10(np.abs(param))
-                output[2 * i + 1, :] = np.angle(param, deg=True)
+            params = []
+            for i in [trace.start, trace.stop]:
+                for j in [trace.start, trace.stop]:
+                    params.append(self.s_params[i][j])
+            output = np.empty((len(self.frequencies), len(params) * 2 + 1))
+            output[:, 0] = self.frequencies / 1e9
+            for i, param in enumerate(params):
+                output[:, 2 * i + 1] = 20 * np.log10(np.abs(param))
+                output[:, 2 * i + 2] = np.angle(param, deg=True)
 
-            header = f"# GHz S DB R {self.reference_zs[trace.start]}"
+            header = f"GHz S DB R {self.reference_zs[trace.start]}"
             np.savetxt(
                 os.path.join(RESULTS_DIR, trace.name + ".s2p"),
                 output,
