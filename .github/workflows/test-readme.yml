@@ -14,5 +14,7 @@ jobs:
         run: pip install .
       - name: Checkout gerber2ems
         uses: actions/checkout@v4
-      - name: Run tuttest
+      - name: Run installation with tuttest
         run: tuttest README.md unnamed0,unnamed1,unnamed2,unnamed3,unnamed4,unnamed5 | bash -
+      - name: Run example with tuttest
+        run: tuttest README.md run-example | bash -

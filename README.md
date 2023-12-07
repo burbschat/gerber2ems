@@ -107,6 +107,13 @@ To simulate a trace, follow these steps:
 * Run `gerber2ems -a` (process described [here](#geometry-creation))
 * View the results in `ems/results` (described in detail [here](#results))
 
+For example, go to one of the example directories and run gerber2ems:
+<!-- name="run-example" -->
+```bash
+cd ./examples/basic/
+gerber2ems -a
+```
+
 ## Results
 
 This software returns the following types of output:
