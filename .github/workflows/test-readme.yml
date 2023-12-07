@@ -20,7 +20,6 @@ jobs:
       - name: Run installation with tuttest
         run: |
           cd ./main
-          pwd
           tuttest README.md unnamed0 | bash -
           tuttest README.md unnamed1 | bash -
           tuttest README.md unnamed2 | bash -
@@ -28,4 +27,6 @@ jobs:
           tuttest README.md unnamed4 | bash -
           tuttest README.md unnamed5 | bash -
       - name: Run example with tuttest
-        run: tuttest README.md run-example | bash -
+        run: |
+          cd ./main
+          tuttest README.md run-example | bash -
