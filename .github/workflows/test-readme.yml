@@ -1,17 +1,18 @@
 name: test-readme
 on: [push]
 jobs:
-  runs-on: ubuntu-latest
-  steps:
-    - name: Setup Python
-      uses: actions/setup-python@v4
-    - name: Clone tuttest
-      uses: actions/checkout@v4
-      with:
-        repository: antmicro/tuttest
-    - name: Install tuttest
-      run: pip install .
-    - name: Checkout gerber2ems
-      uses: actions/checkout@v4
-    - name: Run tuttest
-      run: tuttest README.md unnamed0,unnamed1,unnamed2,unnamed3,unnamed4,unnamed5 | bash -
+  test-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v4
+      - name: Clone tuttest
+        uses: actions/checkout@v4
+        with:
+          repository: antmicro/tuttest
+      - name: Install tuttest
+        run: pip install .
+      - name: Checkout gerber2ems
+        uses: actions/checkout@v4
+      - name: Run tuttest
+        run: tuttest README.md unnamed0,unnamed1,unnamed2,unnamed3,unnamed4,unnamed5 | bash -
