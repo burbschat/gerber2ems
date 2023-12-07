@@ -9,12 +9,23 @@ jobs:
       - name: Clone tuttest
         uses: actions/checkout@v4
         with:
+          path: tuttest
           repository: antmicro/tuttest
       - name: Install tuttest
-        run: pip install .
+        run: pip install tuttest
       - name: Checkout gerber2ems
         uses: actions/checkout@v4
+        with:
+          path: main
       - name: Run installation with tuttest
-        run: tuttest README.md unnamed0,unnamed1,unnamed2,unnamed3,unnamed4,unnamed5 | bash -
+        run: |
+          cd ./main
+          pwd
+          tuttest README.md unnamed0 | bash -
+          tuttest README.md unnamed1 | bash -
+          tuttest README.md unnamed2 | bash -
+          tuttest README.md unnamed3 | bash -
+          tuttest README.md unnamed4 | bash -
+          tuttest README.md unnamed5 | bash -
       - name: Run example with tuttest
         run: tuttest README.md run-example | bash -
