@@ -12,7 +12,7 @@ jobs:
           path: tuttest
           repository: antmicro/tuttest
       - name: Install tuttest
-        run: pip install tuttest
+        run: pip install ./tuttest
       - name: Checkout gerber2ems
         uses: actions/checkout@v4
         with:
