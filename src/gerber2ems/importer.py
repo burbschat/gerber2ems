@@ -74,7 +74,11 @@ def gbr_to_png(gerber_filename: str, edge_filename: str, output_filename: str) -
     gerbv_command += f" -o {not_cropped_name}"
     gerbv_command += f" --dpi={dpi} --export=png -a"
 
-    subprocess.call(gerbv_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
+    try:
+        subprocess.run(gerbv_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True, check=True)
+    except subprocess.CalledProcessError:
+        logger.error(f"Failed to convert gerbers to png using gerbv. Perhaps gerbv is not installed?")
+        sys.exit(1)
 
     not_cropped_image = PIL.Image.open(not_cropped_name)
 
